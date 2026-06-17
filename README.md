@@ -500,20 +500,6 @@ The application implements multiple layers of defense:
 - **Client-side sanitization** — `input-sanitizer.js` strips dangerous characters before submission; `invalid-char-alert.js` provides immediate user feedback.
 - **Parameterized queries** — Spring Data JPA uses parameterized SQL throughout, preventing SQL injection.
 
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/my-new-feature`
-3. **Commit** your changes: `git commit -m 'Add some feature'`
-4. **Push** to the branch: `git push origin feature/my-new-feature`
-5. **Open a Pull Request** against `main`
-
-Please keep PRs focused on a single feature or bug fix and include a clear description of what changed and why.
-
 <div align="center">
 
 [![GitHub](https://img.shields.io/badge/GitHub-3spoo-181717?style=for-the-badge&logo=github)](https://github.com/3spoo)
