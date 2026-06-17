@@ -162,3 +162,21 @@ body {
 [data-bs-theme="dark"] body {
     color: #f8f9fa;
 }
+
+/* SCROLL-BAR */
+#tasksList::-webkit-scrollbar {
+    width: 10px;
+}
+
+#tasksList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#tasksList::-webkit-scrollbar-thumb {
+    background: #6c757d;
+    border-radius: 999px;
+}
+
+#tasksList::-webkit-scrollbar-thumb:hover {
+    background: #495057;
+}

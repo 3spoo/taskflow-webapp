@@ -1,8 +1,7 @@
 body {
     margin: 0;
     font-family: 'Nunito', sans-serif;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 /* TOP BUTTONS */
@@ -11,6 +10,7 @@ body {
     top: 1rem;
     right: 1rem;
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 0.5rem;
     z-index: 10;
@@ -21,42 +21,55 @@ body {
     height: 28px;
 }
 
-.top-buttons .users-btn {
+.top-buttons .btn:not(:first-child) {
+    margin-left: 0.5rem;
+}
+
+.top-buttons a.btn-outline-success {
     background-color: transparent;
     border: none;
     color: #6c757d;
-    padding: 0.375rem;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.3s ease;
-}
-
-.top-buttons .users-btn:hover,
-.top-buttons .users-btn:focus {
-    color: #198754;
-    background-color: transparent;
-}
-
-.top-buttons .theme-toggle {
-    background-color: transparent;
-    border: none;
-    color: #6c757d;
+    padding: 0.375rem 0.75rem;
     font-size: 1.2rem;
     transition: color 0.3s ease;
     outline: none;
     box-shadow: none;
 }
 
-.top-buttons .theme-toggle:hover,
-.top-buttons .theme-toggle:focus {
-    color: black;
+.top-buttons a.btn-outline-success:hover,
+.top-buttons a.btn-outline-success:focus {
+    color: #198754;                /* verde al hover */
+    background-color: transparent;
 }
 
-.top-buttons .logout-btn {
-    padding: 0.375rem 0.75rem;
-    font-weight: bold;
+[data-bs-theme="light"] .top-buttons .btn-outline-secondary {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: color 0.3s ease;
+    color: #6c757d;
+}
+
+[data-bs-theme="light"] .top-buttons .btn-outline-secondary:hover,
+[data-bs-theme="light"] .top-buttons .btn-outline-secondary:focus {
+    color: black;
+    background-color: transparent !important;
+}
+
+[data-bs-theme="dark"] .top-buttons .btn-outline-secondary {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    transition: color 0.3s ease;
+    color: #adb5bd;
+}
+
+[data-bs-theme="dark"] .top-buttons .btn-outline-secondary:hover,
+[data-bs-theme="dark"] .top-buttons .btn-outline-secondary:focus {
+    color: white;
+    background-color: transparent !important;
 }
 
 /* CONTAINER PRINCIPALE */
@@ -65,11 +78,17 @@ body {
     margin: 0;
 }
 
+.left-panel,
+.col-md-6.p-4.d-flex.flex-column {
+    padding-top: 5rem;
+}
+
 /* ROW PRINCIPALE */
 .row.main-row {
     display: flex;
-    flex-wrap: wrap;
-    min-height: 100vh;
+    flex-wrap: nowrap;
+    height: 100vh;
+    margin: 0;
 }
 
 /* LEFT PANEL */
@@ -80,6 +99,7 @@ body {
     padding: 2rem;
     border-right: 1px solid #dee2e6;
     overflow-y: auto;
+    height: 100vh;
 }
 
 /* TASK LIST */
@@ -91,7 +111,7 @@ body {
 }
 
 #tasksList::-webkit-scrollbar {
-    width: 0px;
+    width: 0;
     background: transparent;
 }
 
@@ -106,7 +126,8 @@ body {
     padding: 2rem;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
+    overflow: hidden;
+    height: 100vh;
 }
 
 /* TASK CARD */
@@ -116,7 +137,7 @@ body {
 }
 
 .task-card:hover {
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 .alert-expired .task-title,
@@ -126,13 +147,17 @@ body {
 }
 
 /* FORM CONTROLS */
-.form-control, .form-select, textarea {
+.form-control,
+.form-select,
+textarea {
     background-color: var(--bs-body-bg);
     color: var(--bs-body-color);
     border-color: var(--bs-border-color);
 }
 
-.form-control:focus, .form-select:focus, textarea:focus {
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
     background-color: var(--bs-body-bg);
     color: var(--bs-body-color);
 }
@@ -176,4 +201,22 @@ body {
 /* DARK MODE */
 [data-bs-theme="dark"] body {
     color: #f8f9fa;
+}
+
+/* SCROLL-BAR */
+#tasksList::-webkit-scrollbar {
+    width: 10px;
+}
+
+#tasksList::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#tasksList::-webkit-scrollbar-thumb {
+    background: #6c757d;
+    border-radius: 999px;
+}
+
+#tasksList::-webkit-scrollbar-thumb:hover {
+    background: #495057;
 }
