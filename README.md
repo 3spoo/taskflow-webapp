@@ -516,6 +516,6 @@ Please keep PRs focused on a single feature or bug fix and include a clear descr
 
 <div align="center">
 
-[![GitHub](https://img.shields.io/badge/GitHub-TheHellSide-181717?style=for-the-badge&logo=github)](https://github.com/TheHellSide)
+[![GitHub](https://img.shields.io/badge/GitHub-TheHellSide-181717?style=for-the-badge&logo=github)](https://github.com/3spoo)
 
 </div>
