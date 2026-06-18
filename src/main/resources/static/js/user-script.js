@@ -29,11 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-            const res = await fetch(`${API_BASE}/me`, {
+            const params = new URLSearchParams({
+                username: username,
+                email: email
+            });
+
+            const res = await fetch(`${API_BASE}/me?${params.toString()}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ username, email })
+                credentials: 'include'
             });
 
             if (res.ok) {

@@ -1,10 +1,26 @@
+const API_URL = "/api/v1/task";
+
+const errorDiv = document.getElementById("errorMsg");
+
+function showError(message) {
+    if (!errorDiv) return;
+
+    errorDiv.textContent = message;
+    errorDiv.style.display = "block";
+}
+
+function clearError() {
+    if (!errorDiv) return;
+
+    errorDiv.textContent = "";
+    errorDiv.style.display = "none";
+}
+
 // USER-DATA VALIDATION
 const userData = JSON.parse(localStorage.getItem('loggedUser'));
 if (!userData) {
     window.location.href = 'login.html';
 }
-
-const API_URL = "/api/v1/task";
 
 function getPriorityClass(priority) {
     switch (priority) {
@@ -17,15 +33,20 @@ function getPriorityClass(priority) {
     }
 }
 
-// LOAD-TASK
+// LOAD TASKS
 async function loadTasks() {
     try {
+        clearError();
+
         const res = await fetch(API_URL, {
             method: "GET",
             credentials: 'include'
         });
 
-        if (!res.ok) throw new Error("ERR. during task loading.");
+        if (!res.ok) {
+            showError("ERR. during task loading.");
+            return;
+        }
 
         const tasks = await res.json();
         const tasksList = document.getElementById("tasksList");
@@ -80,19 +101,24 @@ async function loadTasks() {
         });
 
     } catch (error) {
-        alert(error.message);
+        showError("NET. ERR.: " + error.message);
     }
 }
 
 // EDIT
 async function startEditTask(id) {
     try {
+        clearError();
+
         const res = await fetch(`${API_URL}/${id}`, {
             method: "GET",
             credentials: 'include'
         });
 
-        if (!res.ok) throw new Error("ERR. fetching task.");
+        if (!res.ok) {
+            showError("ERR. fetching task.");
+            return;
+        }
 
         const task = await res.json();
 
@@ -103,35 +129,36 @@ async function startEditTask(id) {
         document.getElementById("taskId").value = task.id || "";
         document.getElementById("title").value = task.title || "";
         document.getElementById("description").value = task.description || "";
-        document.getElementById("creationDate").value = task.creationDate || "";
         document.getElementById("dueDate").value = task.dueDate || "";
         document.getElementById("priority").value = task.priority || "LOW";
 
     } catch (error) {
-        alert(error.message);
+        showError("NET. ERR.: " + error.message);
     }
 }
 
+// SUBMIT (CREATE / UPDATE)
 document.getElementById("taskForm").addEventListener("submit", async e => {
     e.preventDefault();
 
-    const taskId = document.getElementById("taskId").value;
+    clearError();
 
+    const taskId = document.getElementById("taskId").value;
     const title = document.getElementById("title").value;
     const description = document.getElementById("description").value;
 
     if (!title || title.trim().length === 0) {
-        alert("Title is required.");
+        showError("Title is required.");
         return;
     }
 
     if (!isValidText(title)) {
-        alert("Invalid title.");
+        showError("Invalid title.");
         return;
     }
 
     if (description && !isValidText(description)) {
-        alert("Invalid description.");
+        showError("Invalid description.");
         return;
     }
 
@@ -153,59 +180,74 @@ document.getElementById("taskForm").addEventListener("submit", async e => {
             body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error("ERR. saving task.");
+        if (!res.ok) {
+            showError("ERR. saving task.");
+            return;
+        }
 
         clearForm();
         loadTasks();
 
     } catch (error) {
-        alert(error.message);
+        showError("NET. ERR.: " + error.message);
     }
 });
 
 // DELETE
 async function deleteTask(id) {
     try {
+        clearError();
+
         const res = await fetch(`${API_URL}/${id}`, {
             method: "DELETE",
             credentials: 'include'
         });
 
-        if (!res.ok) throw new Error("ERR. deleting task.");
+        if (!res.ok) {
+            showError("ERR. deleting task.");
+            return;
+        }
 
         loadTasks();
 
     } catch (error) {
-        alert(error.message);
+        showError("NET. ERR.: " + error.message);
     }
 }
 
 // COMPLETE
 async function completeTask(id) {
     try {
+        clearError();
+
         const res = await fetch(`${API_URL}/${id}/check`, {
             method: "PUT",
             credentials: 'include'
         });
 
-        if (!res.ok) throw new Error("ERR. updating task state.");
+        if (!res.ok) {
+            showError("ERR. updating task state.");
+            return;
+        }
 
         loadTasks();
 
     } catch (error) {
-        alert(error.message);
+        showError("NET. ERR.: " + error.message);
     }
 }
 
+// CLEAR FORM
 function clearForm() {
     document.getElementById("formTitle").textContent = "Create New Task";
     document.getElementById("submitBtn").textContent = "Add Task";
     document.getElementById("cancelEditBtn").classList.add("d-none");
 
-    ["taskId", "title", "description", "creationDate", "dueDate", "priority"]
+    ["taskId", "title", "description", "dueDate", "priority"]
         .forEach(id => document.getElementById(id).value = "");
 }
 
+// ESCAPE HTML
 function escapeHtml(str) {
     return str
         .replace(/&/g, "&amp;")
