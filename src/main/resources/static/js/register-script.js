@@ -55,7 +55,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         if (response.status === 400) {
             showError('REGISTRATION FAILED: ' + message);
         } else {
-            showError('UNX. ERR.: ' + response.status + ' ' + response.statusText);
+            showError('UNX. ' + response.statusText);
         }
 
     } catch (error) {

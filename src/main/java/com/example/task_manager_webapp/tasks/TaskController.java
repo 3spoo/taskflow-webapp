@@ -48,10 +48,10 @@ public class TaskController {
     ) {
         boolean added = taskService.addNewTask(token, taskDTO);
         if (added) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("Task successfully added.");
+            return ResponseEntity.status(HttpStatus.CREATED).body("OK. task successfully added.");
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found or error while saving task.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERR. user not found or error while saving task.");
     }
 
     @DeleteMapping(path = "{taskId}")
@@ -61,10 +61,10 @@ public class TaskController {
     ) {
         boolean deleted = taskService.deleteTask(token, taskId);
         if (deleted) {
-            return ResponseEntity.ok("Task successfully deleted.");
+            return ResponseEntity.ok("OK. Task successfully deleted.");
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERR. task not found.");
     }
 
     @GetMapping(path = "{taskId}")
@@ -95,10 +95,10 @@ public class TaskController {
                 taskDTO.getPriority()
         );
         if (updated) {
-            return ResponseEntity.ok("Task information successfully updated.");
+            return ResponseEntity.ok("OK. task information successfully updated.");
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERR. task not found.");
     }
 
     @PutMapping(path = "{taskId}/check")
@@ -115,12 +115,12 @@ public class TaskController {
         if (checked.isPresent()) {
             return ResponseEntity
                     .ok(
-                            checked.get() ? "Task marked as completed." : "Task marked as not completed."
+                            checked.get() ? "OK. task marked as completed." : "OK. task marked as not completed."
                     );
         }
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
-                .body("Failed to update task status. Task may not exist.");
+                .body("ERR. failed to update task status. task may not exist.");
     }
 }

@@ -148,17 +148,17 @@ document.getElementById("taskForm").addEventListener("submit", async e => {
     const description = document.getElementById("description").value;
 
     if (!title || title.trim().length === 0) {
-        showError("Title is required.");
+        showError("ERR. title is required.");
         return;
     }
 
     if (!isValidText(title)) {
-        showError("Invalid title.");
+        showError("ERR. invalid title.");
         return;
     }
 
     if (description && !isValidText(description)) {
-        showError("Invalid description.");
+        showError("ERR. invalid description.");
         return;
     }
 

@@ -28,10 +28,10 @@ public class TokenController {
         Optional<User> optionalUser = userRepository.findById(userId);
 
         if (optionalUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERR. user not found.");
         }
 
         tokenService.deleteUserTokens(optionalUser.get());
-        return ResponseEntity.ok("All tokens deleted for user ID: " + userId);
+        return ResponseEntity.ok("OK. all tokens deleted for user_id: '" + userId + "'.");
     }
 }

@@ -45,7 +45,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
-        showError('UNX. ERR.: ' + res.status + ' ' + res.statusText);
+        showError('UNX. ' + res.statusText);
 
     } catch (error) {
         showError('NET. ERR.: ' + error.message);

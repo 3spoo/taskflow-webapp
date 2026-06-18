@@ -30,10 +30,10 @@ public class UserController {
     public ResponseEntity<String> registerNewUser(@RequestBody RegistrationRequest user) {
         boolean registered = userService.registerNewUser(user);
         if (registered) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("User successfully registered.");
+            return ResponseEntity.status(HttpStatus.CREATED).body("OK. user successfully registered.");
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User already exists.");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ERR. user already exists.");
     }
 
     @PostMapping("/in")
@@ -43,7 +43,7 @@ public class UserController {
     ) {
         Optional<Map<String, Object>> dataOptional = userService.login(loginRequest.getAccount(), loginRequest.getPassword());
         if (dataOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid account or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERR. invalid account or password");
         }
 
         Map<String, Object> data = dataOptional.get();
@@ -72,6 +72,7 @@ public class UserController {
     }
 
     // TESTING ENDPOINT
+    /*
     @PostMapping("/me/extend-session")
     public  ResponseEntity<?> extendUserSession(
             @CookieValue(name = "authentication-token") String token,
@@ -79,11 +80,12 @@ public class UserController {
     ) {
         boolean isExtendedSession = tokenService.extendSession(token, response, 30);
         if (isExtendedSession) {
-            return ResponseEntity.ok("Session extended.");
+            return ResponseEntity.ok("OK. session extended.");
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not valid cookie.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERR. not valid cookie.");
     }
+    */
 
     @DeleteMapping(path = "/me")
     public ResponseEntity<String> deleteUser(
@@ -91,10 +93,10 @@ public class UserController {
     ) {
         boolean deleted = userService.deleteUser(token);
         if (deleted) {
-            return ResponseEntity.ok("User successfully deleted.");
+            return ResponseEntity.ok("OK. user successfully deleted.");
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERR. user not found.");
     }
 
     @PutMapping(path = "/me") // TO BAN SPECIAL CHARS.
@@ -105,10 +107,10 @@ public class UserController {
     ) {
         boolean updated = userService.updateUser(token, username, email);
         if (updated) {
-            return ResponseEntity.ok("User information successfully updated.");
+            return ResponseEntity.ok("OK. user information successfully updated.");
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERR. user not found.");
     }
 
     @PostMapping(path = "me/verify-password")
@@ -118,9 +120,9 @@ public class UserController {
     ) {
         User user = userService.checkPassword(token, passwordRequest.getPassword());
         if (user != null) {
-            return ResponseEntity.ok("Password verified.");
+            return ResponseEntity.ok("OK. password verified.");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password.");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("ERR. incorrect password.");
     }
 
     @PutMapping(path = "me/password") // TO BAN SPECIAL CHARS.
@@ -131,9 +133,9 @@ public class UserController {
 
         boolean updated = userService.updateUserPassword(token, passwordRequest.getPassword(), passwordRequest.getReplacementPassword());
         if (updated) {
-            return ResponseEntity.ok("Password successfully updated.");
+            return ResponseEntity.ok("OK. password successfully updated.");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ERR. invalid credentials.");
     }
 
     private String getTokenFromCookie(HttpServletRequest request) {

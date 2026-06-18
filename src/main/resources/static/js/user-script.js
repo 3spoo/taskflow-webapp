@@ -19,12 +19,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const email = document.getElementById('email').value;
 
         if (!isValidUsername(username)) {
-            showError('ERR. invalid username format.');
+            showErrorUpdate('ERR. invalid username format.');
             return;
         }
 
         if (!isValidEmail(email)) {
-            showError('ERR. invalid email format.');
+            showErrorUpdate('ERR. invalid email format.');
             return;
         }
 
@@ -40,17 +40,17 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (res.ok) {
-                showSuccess('OK. user information updated successfully.');
+                showSuccessUpdate('OK. user information updated successfully.');
 
                 loggedUser.username = username;
                 loggedUser.email = email;
                 localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
             } else {
                 const msg = await res.text();
-                showError(msg);
+                showErrorUpdate(msg);
             }
         } catch (err) {
-            showError('NET. ERR.: ' + err.message);
+            showErrorUpdate('NET. ERR.: ' + err.message);
         }
     });
 
@@ -68,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         if (newPass !== confirmPass) {
-            showError('ERR. new passwords do not match.');
+            showError('ERR. passwords do not match.');
             return;
         }
 
@@ -118,9 +118,23 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+function showErrorUpdate(message) {
+    const msg = document.getElementById('message_update');
+    msg.className = 'alert alert-danger';
+    msg.textContent = message;
+    msg.style.display = 'block';
+}
+
 function showError(message) {
     const msg = document.getElementById('message');
     msg.className = 'alert alert-danger';
+    msg.textContent = message;
+    msg.style.display = 'block';
+}
+
+function showSuccessUpdate(message) {
+    const msg = document.getElementById('message_update');
+    msg.className = 'alert alert-success';
     msg.textContent = message;
     msg.style.display = 'block';
 }
