@@ -21,6 +21,7 @@ Organize your work, track priorities, and manage your account — all in one cle
 ## 📋 Overview
 
 **TaskFlow** is a production-ready, full-stack web application that gives users a central hub for creating, prioritizing, and tracking tasks. Built on **Spring Boot 3.5.4** and backed by **MariaDB**, it follows a clean MVC architecture with a RESTful API backend and a vanilla HTML/CSS/JavaScript frontend. No JavaScript frameworks — just clean, fast, dependency-light code.
+VIDEO: [https://youtu.be/o_HOhDKjUx0](https://youtu.be/o_HOhDKjUx0)
 
 - 🔐 **Secure by design** — BCrypt hashing, HttpOnly cookies, input sanitization, SameSite CSRF protection
 - 🎨 **Dark / Light theme** — persisted per-browser in `localStorage`
