@@ -30,7 +30,7 @@ public class UserConfiguration {
             );
 
             for (User user : List.of(admin)){
-                if (!userExists(userRepository, user.getUsername(), user.getEmail())){
+                if (userRepository.findByUsernameOrEmail(user.getUsername(), user.getEmail()).isEmpty()){
                     userRepository.save(user);
 
                     Task DEFAULT_TASK = new Task(
@@ -45,12 +45,5 @@ public class UserConfiguration {
                 }
             }
         };
-    }
-
-    private boolean userExists(UserRepository userRepository, String username, String email){
-        Optional<User> userOptional = userRepository
-                .findByUsernameOrEmail(username, email);
-
-        return userOptional.isPresent();
     }
 }

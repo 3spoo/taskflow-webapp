@@ -26,7 +26,7 @@ public class UserController {
         this.tokenService = tokenService;
     }
 
-    @PostMapping // TO BAN SPECIAL CHARS.
+    @PostMapping() // TO BAN SPECIAL CHARS.
     public ResponseEntity<String> registerNewUser(@RequestBody RegistrationRequest user) {
         boolean registered = userService.registerNewUser(user);
         if (registered) {
@@ -41,9 +41,9 @@ public class UserController {
             @RequestBody LoginRequest loginRequest,
             HttpServletResponse response
     ) {
-        Optional<Map<String, Object>> dataOptional = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+        Optional<Map<String, Object>> dataOptional = userService.login(loginRequest.getAccount(), loginRequest.getPassword());
         if (dataOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid account or password");
         }
 
         Map<String, Object> data = dataOptional.get();

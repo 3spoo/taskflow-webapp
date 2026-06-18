@@ -21,7 +21,10 @@ public class Task {
     private String description;
     private LocalDate creationDate;
     private LocalDate dueDate;
+
+    @Enumerated(EnumType.STRING)
     private TaskPriority priority;
+
     private boolean completed;
 
     public Task() {

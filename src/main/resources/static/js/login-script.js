@@ -8,40 +8,52 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     errorDiv.style.display = 'none';
     errorDiv.textContent = '';
 
-    const rawUsername = document.getElementById('username').value;
-    const rawPassword = document.getElementById('password').value;
+    const account = document.getElementById('account').value;
+    const password = document.getElementById('password').value;
 
-    const username = sanitizeUsername(rawUsername);
-    const password = sanitizePassword(rawPassword);
+    const isAccountValid =
+        isValidEmail(account) || isValidUsername(account);
 
-    if (warnIfInvalidChars(rawUsername, username, 'Username'))
+    if (!isAccountValid) {
+        showError('ERR. invalid username or email format.');
         return;
+    }
+
+    if (!isValidPassword(password)) {
+        showError('ERR. invalid password format.');
+        return;
+    }
 
     try {
         const res = await fetch(API_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ account, password }),
         });
 
         if (res.ok) {
             const userData = await res.json();
             localStorage.setItem('loggedUser', JSON.stringify(userData));
             window.location.href = 'dashboard.html';
+            return;
         }
-        else if (res.status === 401) {
+
+        if (res.status === 401) {
             const err = await res.text();
-            errorDiv.textContent = 'Login failed: ' + err;
-            errorDiv.style.display = 'block';
+            showError('LOGIN FAILED: ' + err);
+            return;
         }
-        else {
-            errorDiv.textContent = 'Unexpected error: ' + res.statusText;
-            errorDiv.style.display = 'block';
-        }
-    }
-    catch (error) {
-        errorDiv.textContent = 'Network error: ' + error.message;
-        errorDiv.style.display = 'block';
+
+        showError('UNX. ERR.: ' + res.status + ' ' + res.statusText);
+
+    } catch (error) {
+        showError('NET. ERR.: ' + error.message);
     }
 });
+
+
+function showError(message) {
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+}

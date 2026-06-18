@@ -1,8 +1,7 @@
 package com.example.task_manager_webapp.users;
 
-import static com.example.task_manager_webapp.security.Security.sha256;
+import static com.example.task_manager_webapp.security.Security.*;
 
-import com.example.task_manager_webapp.security.Security;
 import com.example.task_manager_webapp.security.tokens.Token;
 import com.example.task_manager_webapp.security.tokens.TokenRepository;
 import com.example.task_manager_webapp.security.tokens.TokenService;
@@ -23,7 +22,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-    private final BCryptPasswordEncoder encoder; // TO IMPLEMENT.
+    private final BCryptPasswordEncoder encoder;
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final TaskRepository taskRepository;
@@ -41,14 +40,21 @@ public class UserService {
     }
 
     public boolean registerNewUser(RegistrationRequest registrationRequest) {
+        String username = registrationRequest.getUsername();
+        String email = registrationRequest.getEmail();
+        String password = registrationRequest.getPassword();
+
+        if (!isValidUsername(username) ||
+                !isValidEmail(email) ||
+                !isValidPassword(password)) {
+            return false;
+        }
+
         Optional<User> optionalUser = userRepository
-                .findByUsernameOrEmail(registrationRequest.getUsername(), registrationRequest.getEmail());
+                .findByUsernameOrEmail(username, email);
 
-        if (optionalUser.isEmpty()){
-            User user = UserMapper.fromRequest(
-                    registrationRequest
-            );
-
+        if (optionalUser.isEmpty()) {
+            User user = UserMapper.fromRequest(registrationRequest);
             if (user == null)
                 return false;
 
@@ -61,8 +67,16 @@ public class UserService {
         return false;
     }
 
-    public Optional<Map<String, Object>> login(String username, String password) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
+    public Optional<Map<String, Object>> login(String account, String password) {
+        if (!isValidEmail(account) && !isValidUsername(account)) {
+            return Optional.empty();
+        }
+
+        if (!isValidPassword(password)) {
+            return Optional.empty();
+        }
+
+        Optional<User> userOptional = userRepository.findByUsernameOrEmail(account);
         if (userOptional.isEmpty())
             return Optional.empty();
 
@@ -70,11 +84,10 @@ public class UserService {
         if (!encoder.matches(password, user.getPassword()))
             return Optional.empty();
 
-        String unhashed_token = tokenService.generateToken(user);
-
+        String token = tokenService.generateToken(user);
         return Optional.of(
                 Map.of(
-                        "token", unhashed_token,
+                        "token", token,
                         "user", new LoginResponse(
                                 user.getUsername(),
                                 user.getEmail()
@@ -122,28 +135,26 @@ public class UserService {
     }
 
     @Transactional
-    public boolean updateUser(
-            String token,
-            String username,
-            String email
-    ) {
-        username = Security.sanitizeUsername(username); email = Security.sanitizeEmail(email);
+    public boolean updateUser(String token, String username, String email) {
         Optional<User> optionalUser = getUserFromValidToken(token);
         if (optionalUser.isEmpty())
             return false;
 
         User user = optionalUser.get();
+        if (StringUtils.hasText(username)
+                && isValidUsername(username)
+                && !username.equals(user.getUsername())) {
 
-        if (StringUtils.hasText(username) && !username.equals(user.getUsername())) {
             Optional<User> userOptional = userRepository.findByUsername(username);
-
             if (userOptional.isEmpty())
                 user.setUsername(username);
         }
 
-        if (StringUtils.hasText(email) && !email.equals(user.getEmail())) {
-            Optional<User> userOptional = userRepository.findByEmail(email);
+        if (StringUtils.hasText(email)
+                && isValidEmail(email)
+                && !email.equals(user.getEmail())) {
 
+            Optional<User> userOptional = userRepository.findByEmail(email);
             if (userOptional.isEmpty())
                 user.setEmail(email);
         }
@@ -158,7 +169,6 @@ public class UserService {
             return null;
 
         User user = userOptional.get();
-
         if (!encoder.matches(oldPassword, user.getPassword())) {
             return null;
         }
@@ -167,15 +177,18 @@ public class UserService {
     }
 
     public boolean updateUserPassword(String token, String oldPassword, String newPassword) {
-        User user = checkPassword(token, oldPassword);
+        if (!isValidPassword(oldPassword) || !isValidPassword(newPassword)) {
+            return false;
+        }
 
+        User user = checkPassword(token, oldPassword);
         if (user == null)
             return false;
 
         user.setPassword(
                 encoder.encode(newPassword)
         );
-        
+
         userRepository.save(user);
         return true;
     }

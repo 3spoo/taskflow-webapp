@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // USER-DATA VALIDATION
     const loggedUser = JSON.parse(localStorage.getItem('loggedUser'));
     if (!loggedUser) {
         window.location.href = 'login.html';
@@ -11,21 +10,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const API_BASE = 'http://localhost:8080/api/v1/user';
 
-    // UPDATE USER-INFORMATIONS
+    // UPDATE
     document.getElementById('updateForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         clearMessages();
 
-        const rawUsername = document.getElementById('username').value;
-        const rawEmail = document.getElementById('email').value;
+        const username = document.getElementById('username').value;
+        const email = document.getElementById('email').value;
 
-        const username = sanitizeUsername(rawUsername);
-        const email = sanitizeEmail(rawEmail);
+        if (!isValidUsername(username)) {
+            showError('ERR. invalid username format.');
+            return;
+        }
 
-        if (warnIfInvalidChars(rawUsername, username, 'Username'))
+        if (!isValidEmail(email)) {
+            showError('ERR. invalid email format.');
             return;
-        if (warnIfInvalidChars(rawEmail, email, 'Email'))
-            return;
+        }
 
         try {
             const res = await fetch(`${API_BASE}/me`, {
@@ -36,31 +37,35 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (res.ok) {
-                showSuccess('User information updated successfully.');
+                showSuccess('OK. user information updated successfully.');
+
                 loggedUser.username = username;
-                loggedUser.email    = email;
+                loggedUser.email = email;
                 localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
             } else {
                 const msg = await res.text();
                 showError(msg);
             }
-        }
-        catch (err) {
-            showError('Network error: ' + err.message);
+        } catch (err) {
+            showError('NET. ERR.: ' + err.message);
         }
     });
 
-    // PASSWORD CHANGE
     document.getElementById('passwordForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         clearMessages();
 
-        const current     = sanitizePassword(document.getElementById('currentPassword').value);
-        const newPass     = sanitizePassword(document.getElementById('newPassword').value);
-        const confirmPass = sanitizePassword(document.getElementById('confirmPassword').value);
+        const current = document.getElementById('currentPassword').value;
+        const newPass = document.getElementById('newPassword').value;
+        const confirmPass = document.getElementById('confirmPassword').value;
+
+        if (!isValidPassword(current) || !isValidPassword(newPass)) {
+            showError('ERR. invalid password format.');
+            return;
+        }
 
         if (newPass !== confirmPass) {
-            showError('New passwords do not match.');
+            showError('ERR. new passwords do not match.');
             return;
         }
 
@@ -76,19 +81,18 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (updateRes.ok) {
-                showSuccess('Password changed successfully.');
+                showSuccess('OK. password changed successfully.');
                 e.target.reset();
             } else {
                 const msg = await updateRes.text();
                 showError(msg);
             }
-        }
-        catch (err) {
-            showError('Network error: ' + err.message);
+        } catch (err) {
+            showError('NET. ERR.: ' + err.message);
         }
     });
 
-    // DELETE ACCOUNT
+    // DELETE
     document.getElementById('deleteBtn').addEventListener('click', async () => {
         clearMessages();
         localStorage.removeItem('loggedUser');
@@ -105,29 +109,28 @@ document.addEventListener("DOMContentLoaded", () => {
                 const msg = await res.text();
                 showError(msg);
             }
-        }
-        catch (err) {
-            showError('Network error: ' + err.message);
+        } catch (err) {
+            showError('NET. ERR.: ' + err.message);
         }
     });
 });
 
 function showError(message) {
     const msg = document.getElementById('message');
-    msg.className    = 'alert alert-danger';
-    msg.textContent  = message;
+    msg.className = 'alert alert-danger';
+    msg.textContent = message;
     msg.style.display = 'block';
 }
 
 function showSuccess(message) {
     const msg = document.getElementById('message');
-    msg.className    = 'alert alert-success';
-    msg.textContent  = message;
+    msg.className = 'alert alert-success';
+    msg.textContent = message;
     msg.style.display = 'block';
 }
 
 function clearMessages() {
     const msg = document.getElementById('message');
     msg.style.display = 'none';
-    msg.textContent   = '';
+    msg.textContent = '';
 }

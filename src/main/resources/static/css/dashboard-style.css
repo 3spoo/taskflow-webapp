@@ -146,6 +146,11 @@ body {
     opacity: 0.7;
 }
 
+.alert-completed .task-title,
+.alert-completed .task-description {
+    opacity: 0.7;
+}
+
 /* FORM CONTROLS */
 .form-control,
 .form-select,

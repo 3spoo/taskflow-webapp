@@ -9,8 +9,8 @@ public class UserMapper {
     public static User fromRequest(RegistrationRequest request) {
         try {
             User user = new User(
-                    Security.sanitizeEmail(request.getEmail()),
-                    Security.sanitizeUsername(request.getUsername()),
+                    request.getEmail(),
+                    request.getUsername(),
                     BCrypt.hashpw(request.getPassword(), BCrypt.gensalt())
             );
 
